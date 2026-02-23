@@ -16,6 +16,7 @@ namespace Microsoft.ContactManager.CLI
                 Console.WriteLine("1. Add Contact");
                 Console.WriteLine("2. List Contacts");
                 Console.WriteLine("3. View Contact");
+                Console.WriteLine("4. Edit Contact");
                 Console.WriteLine("9. Exit");
                 Console.Write("Choose option: ");
 
@@ -57,6 +58,7 @@ namespace Microsoft.ContactManager.CLI
                             }
                         }
                         break;
+                    Console.WriteLine("4. Edit Contact");
 
                     case "3":
                         Console.Write("Enter Contact Id: ");
@@ -77,6 +79,28 @@ namespace Microsoft.ContactManager.CLI
                             Console.WriteLine($"Email: {contact.Email}");
                             Console.WriteLine($"Created: {contact.CreationDate}");
                         }
+                        break;
+
+                    case "4":
+                        Console.Write("Enter Contact Id to edit: ");
+                        int editId = int.Parse(Console.ReadLine());
+
+                        Console.Write("New Name: ");
+                        string newName = Console.ReadLine();
+
+                        Console.Write("New Phone: ");
+                        string newPhone = Console.ReadLine();
+
+                        Console.Write("New Email: ");
+                        string newEmail = Console.ReadLine();
+
+                        bool updated = contactService.EditContact(editId, newName, newPhone, newEmail);
+
+                        if (updated)
+                            Console.WriteLine("Contact updated successfully.");
+                        else
+                            Console.WriteLine("Contact not found so no updates .");
+
                         break;
 
                     case "9":
