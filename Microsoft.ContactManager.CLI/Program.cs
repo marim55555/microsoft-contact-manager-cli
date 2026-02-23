@@ -19,6 +19,7 @@ namespace Microsoft.ContactManager.CLI
                 Console.WriteLine("4. Edit Contact");
                 Console.WriteLine("5. Delete Contact");
                 Console.WriteLine("6. Search Contacts");
+                Console.WriteLine("7. Filter Contacts by Date");
                 Console.WriteLine("9. Exit");
                 Console.Write("Choose option: ");
 
@@ -136,6 +137,34 @@ namespace Microsoft.ContactManager.CLI
                                 Console.WriteLine($"Email: {c.Email}");
                                 Console.WriteLine($"Created: {c.CreationDate}");
                             }
+                        }
+                        break;
+
+                    case "7":
+                        Console.Write("Enter date (yyyy-MM-dd): ");
+                        DateTime filterDate;
+                        if (DateTime.TryParse(Console.ReadLine(), out filterDate))
+                        {
+                            var filteredContacts = contactService.FilterContactsByDate(filterDate);
+
+                            if (filteredContacts.Count == 0)
+                                Console.WriteLine("No contacts found.");
+                            else
+                            {
+                                foreach (var c in filteredContacts)
+                                {
+                                    Console.WriteLine("-----------");
+                                    Console.WriteLine($"Id: {c.Id}");
+                                    Console.WriteLine($"Name: {c.Name}");
+                                    Console.WriteLine($"Phone: {c.Phone}");
+                                    Console.WriteLine($"Email: {c.Email}");
+                                    Console.WriteLine($"Created: {c.CreationDate}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid date format.");
                         }
                         break;
 
