@@ -1,10 +1,71 @@
-﻿namespace Microsoft.ContactManager.CLI
+﻿using System;
+using Microsoft.ContactManager.CLI.Services;
+
+namespace Microsoft.ContactManager.CLI
 {
-    internal class Program
+    class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            ContactService contactService = new ContactService();
+            bool isRunning = true;
+
+            while (isRunning)
+            {
+                Console.WriteLine("\n==== Contact Manager ====");
+                Console.WriteLine("1. Add Contact");
+                Console.WriteLine("2. List Contacts");
+                Console.WriteLine("9. Exit");
+                Console.Write("Choose option: ");
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        Console.Write("Name: ");
+                        string name = Console.ReadLine();
+
+                        Console.Write("Phone: ");
+                        string phone = Console.ReadLine();
+
+                        Console.Write("Email: ");
+                        string email = Console.ReadLine();
+
+                        contactService.AddContact(name, phone, email);
+                        Console.WriteLine("Contact added successfully.");
+                        break;
+
+                    case "2":
+                        var contacts = contactService.GetContacts();
+
+                        if (contacts.Count == 0)
+                        {
+                            Console.WriteLine("No contacts found .");
+                        }
+                        else
+                        {
+                            foreach (var contact in contacts)
+                            {
+                                Console.WriteLine("-------------------");
+                                Console.WriteLine($"Id: {contact.Id}");
+                                Console.WriteLine($"Name: {contact.Name}");
+                                Console.WriteLine($"Phone: {contact.Phone}");
+                                Console.WriteLine($"Email: {contact.Email}");
+                                Console.WriteLine($"Created: {contact.CreationDate}");
+                            }
+                        }
+                        break;
+
+                    case "9":
+                        isRunning = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid option.");
+                        break;
+                }
+            }
         }
     }
 }
