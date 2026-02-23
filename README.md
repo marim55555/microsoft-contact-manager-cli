@@ -1,7 +1,8 @@
 # Microsoft Contact Manager CLI
 
 A **Command-Line Interface (CLI)** application for managing contacts in C# using .NET.  
-Allows adding, editing, deleting, viewing, searching, and filtering contacts. All data is stored in a **contacts.json** file.
+Allows adding, editing, deleting, viewing, searching, and filtering contacts.  
+All data is stored in a **contacts.json** file.
 
 ---
 
@@ -9,6 +10,7 @@ Allows adding, editing, deleting, viewing, searching, and filtering contacts. Al
 
 - **.NET SDK** (version 6 or higher recommended)  
   Check with:
+
   ```bash
   dotnet --version
 
@@ -42,16 +44,12 @@ Save Contacts
 Exit
 
 Usage Examples
-
 Add a Contact
-
 Choose option: 1
 Name: Ahmed Ali
 Phone: 01012345678
 Email: ahmed@example.com
-
 List Contacts
-
 Choose option: 2
 -------------------
 Id: 1
@@ -59,18 +57,14 @@ Name: Ahmed Ali
 Phone: 01012345678
 Email: ahmed@example.com
 Created: 2026-02-24 14:30:12
-
 Search Contacts
-
 Choose option: 6
 Enter search keyword: Ahmed
 -------------------
 Id: 1
 Name: Ahmed Ali
 Email: ahmed@example.com
-
 Filter by Date
-
 Choose option: 7
 Enter date (yyyy-MM-dd): 2026-02-24
 -------------------
@@ -95,5 +89,3 @@ License
 Not specified. Optional: MIT License
 
 © 2026 Marym
-
----
