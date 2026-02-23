@@ -15,6 +15,7 @@ namespace Microsoft.ContactManager.CLI
                 Console.WriteLine("\n==== Contact Manager ====");
                 Console.WriteLine("1. Add Contact");
                 Console.WriteLine("2. List Contacts");
+                Console.WriteLine("3. View Contact");
                 Console.WriteLine("9. Exit");
                 Console.Write("Choose option: ");
 
@@ -54,6 +55,27 @@ namespace Microsoft.ContactManager.CLI
                                 Console.WriteLine($"Email: {contact.Email}");
                                 Console.WriteLine($"Created: {contact.CreationDate}");
                             }
+                        }
+                        break;
+
+                    case "3":
+                        Console.Write("Enter Contact Id: ");
+                        int id = int.Parse(Console.ReadLine());
+
+                        var contact = contactService.GetContactById(id);
+
+                        if (contact == null)
+                        {
+                            Console.WriteLine("Contact not found.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("-----------");
+                            Console.WriteLine($"Id: {contact.Id}");
+                            Console.WriteLine($"Name: {contact.Name}");
+                            Console.WriteLine($"Phone: {contact.Phone}");
+                            Console.WriteLine($"Email: {contact.Email}");
+                            Console.WriteLine($"Created: {contact.CreationDate}");
                         }
                         break;
 
