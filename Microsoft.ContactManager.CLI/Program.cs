@@ -17,6 +17,7 @@ namespace Microsoft.ContactManager.CLI
                 Console.WriteLine("2. List Contacts");
                 Console.WriteLine("3. View Contact");
                 Console.WriteLine("4. Edit Contact");
+                Console.WriteLine("5. Delete Contact");
                 Console.WriteLine("9. Exit");
                 Console.Write("Choose option: ");
 
@@ -101,6 +102,18 @@ namespace Microsoft.ContactManager.CLI
                         else
                             Console.WriteLine("Contact not found so no updates .");
 
+                        break;
+
+                    case "5":
+                        Console.Write("Enter Contact Id to delete: ");
+                        int deleteId = int.Parse(Console.ReadLine());
+
+                        bool removed = contactService.DeleteContact(deleteId);
+
+                        if (removed)
+                            Console.WriteLine("Contact deleted successfully.");
+                        else
+                            Console.WriteLine("Contact not found to be deleted.");
                         break;
 
                     case "9":
