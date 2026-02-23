@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.ContactManager.CLI.Models;
+using Microsoft.ContactManager.CLI.Data;
 
 namespace Microsoft.ContactManager.CLI.Services
 {
@@ -7,10 +8,14 @@ namespace Microsoft.ContactManager.CLI.Services
     {
         private List<Contact> _contacts;
         private int _currentId = 1;
+        private readonly IStorageService _storage;
 
-        public ContactService()
+        public ContactService(IStorageService storage)
         {
-            _contacts = new List<Contact>();
+            _storage = storage;
+            _contacts = _storage.Load();
+            if (_contacts.Count > 0)
+                _currentId = _contacts[^1].Id + 1;
         }
 
         public void AddContact(string name, string phone, string email)
@@ -26,31 +31,34 @@ namespace Microsoft.ContactManager.CLI.Services
             _contacts.Add(contact);
             _currentId++;
         }
+
+        public List<Contact> GetContacts()
+        {
+            return _contacts;
+        }
+
         public Contact GetContactById(int id)
         {
             foreach (var contact in _contacts)
             {
                 if (contact.Id == id)
-                {
                     return contact;
-                }
             }
-
             return null;
         }
+
         public bool EditContact(int id, string name, string phone, string email)
         {
             var contact = GetContactById(id);
-
             if (contact == null)
                 return false;
 
             contact.Name = name;
             contact.Phone = phone;
             contact.Email = email;
-
             return true;
         }
+
         public bool DeleteContact(int id)
         {
             var contact = GetContactById(id);
@@ -60,36 +68,32 @@ namespace Microsoft.ContactManager.CLI.Services
             _contacts.Remove(contact);
             return true;
         }
+
         public List<Contact> SearchContacts(string keyword)
         {
-            var results = new List<Contact>();
-
+            List<Contact> result = new List<Contact>();
             foreach (var contact in _contacts)
             {
-                if ((contact.Name != null && contact.Name.Contains(keyword, StringComparison.OrdinalIgnoreCase)) ||
-                    (contact.Email != null && contact.Email.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
-                {
-                    results.Add(contact);
-                }
+                if (contact.Name.Contains(keyword) || contact.Email.Contains(keyword))
+                    result.Add(contact);
             }
-
-            return results;
+            return result;
         }
+
         public List<Contact> FilterContactsByDate(DateTime date)
         {
-            var results = new List<Contact>();
-
+            List<Contact> result = new List<Contact>();
             foreach (var contact in _contacts)
             {
                 if (contact.CreationDate.Date == date.Date)
-                    results.Add(contact);
+                    result.Add(contact);
             }
-
-            return results;
+            return result;
         }
-        public List<Contact> GetContacts()
+
+        public void SaveContacts()
         {
-            return _contacts;
+            _storage.Save(_contacts);
         }
     }
 }

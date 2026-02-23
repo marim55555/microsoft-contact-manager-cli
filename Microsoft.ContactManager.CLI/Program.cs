@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.ContactManager.CLI.Services;
+using Microsoft.ContactManager.CLI.Data;
 
 namespace Microsoft.ContactManager.CLI
 {
@@ -7,7 +8,8 @@ namespace Microsoft.ContactManager.CLI
     {
         static void Main(string[] args)
         {
-            ContactService contactService = new ContactService();
+            IStorageService storage = new JsonStorageService();
+            ContactService contactService = new ContactService(storage);
             bool isRunning = true;
 
             while (isRunning)
@@ -20,6 +22,7 @@ namespace Microsoft.ContactManager.CLI
                 Console.WriteLine("5. Delete Contact");
                 Console.WriteLine("6. Search Contacts");
                 Console.WriteLine("7. Filter Contacts by Date");
+                Console.WriteLine("8. Save Contacts");
                 Console.WriteLine("9. Exit");
                 Console.Write("Choose option: ");
 
@@ -42,15 +45,14 @@ namespace Microsoft.ContactManager.CLI
                         break;
 
                     case "2":
-                        var allContacts = contactService.GetContacts();
-
-                        if (allContacts.Count == 0)
+                        var contacts = contactService.GetContacts();
+                        if (contacts.Count == 0)
                         {
                             Console.WriteLine("No contacts found.");
                         }
                         else
                         {
-                            foreach (var c in allContacts)
+                            foreach (var c in contacts)
                             {
                                 Console.WriteLine("-------------------");
                                 Console.WriteLine($"Id: {c.Id}");
@@ -64,36 +66,34 @@ namespace Microsoft.ContactManager.CLI
 
                     case "3":
                         Console.Write("Enter Contact Id: ");
-                        int viewId = int.Parse(Console.ReadLine());
-
-                        var viewContact = contactService.GetContactById(viewId);
-
-                        if (viewContact == null)
+                        if (int.TryParse(Console.ReadLine(), out int viewId))
                         {
-                            Console.WriteLine("Contact not found.");
+                            var contact = contactService.GetContactById(viewId);
+                            if (contact == null)
+                                Console.WriteLine("Contact not found.");
+                            else
+                            {
+                                Console.WriteLine("-----------");
+                                Console.WriteLine($"Id: {contact.Id}");
+                                Console.WriteLine($"Name: {contact.Name}");
+                                Console.WriteLine($"Phone: {contact.Phone}");
+                                Console.WriteLine($"Email: {contact.Email}");
+                                Console.WriteLine($"Created: {contact.CreationDate}");
+                            }
                         }
                         else
                         {
-                            Console.WriteLine("-----------");
-                            Console.WriteLine($"Id: {viewContact.Id}");
-                            Console.WriteLine($"Name: {viewContact.Name}");
-                            Console.WriteLine($"Phone: {viewContact.Phone}");
-                            Console.WriteLine($"Email: {viewContact.Email}");
-                            Console.WriteLine($"Created: {viewContact.CreationDate}");
+                            Console.WriteLine("Invalid Id input.");
                         }
                         break;
 
                     case "4":
                         Console.Write("Enter Contact Id to edit: ");
-                        int editId;
-                        if (int.TryParse(Console.ReadLine(), out editId))
+                        if (int.TryParse(Console.ReadLine(), out int editId))
                         {
                             var existingContact = contactService.GetContactById(editId);
-
                             if (existingContact == null)
-                            {
                                 Console.WriteLine("Contact not found. No updates made.");
-                            }
                             else
                             {
                                 Console.Write("New Name: ");
@@ -105,10 +105,8 @@ namespace Microsoft.ContactManager.CLI
                                 Console.Write("New Email: ");
                                 string newEmail = Console.ReadLine();
 
-                                bool updated = contactService.EditContact(editId, newName, newPhone, newEmail);
-
-                                if (updated)
-                                    Console.WriteLine("Contact updated successfully.");
+                                contactService.EditContact(editId, newName, newPhone, newEmail);
+                                Console.WriteLine("Contact updated successfully.");
                             }
                         }
                         else
@@ -119,22 +117,24 @@ namespace Microsoft.ContactManager.CLI
 
                     case "5":
                         Console.Write("Enter Contact Id to delete: ");
-                        int deleteId = int.Parse(Console.ReadLine());
-
-                        bool removed = contactService.DeleteContact(deleteId);
-
-                        if (removed)
-                            Console.WriteLine("Contact deleted successfully.");
+                        if (int.TryParse(Console.ReadLine(), out int deleteId))
+                        {
+                            bool removed = contactService.DeleteContact(deleteId);
+                            if (removed)
+                                Console.WriteLine("Contact deleted successfully.");
+                            else
+                                Console.WriteLine("Contact not found to be deleted.");
+                        }
                         else
-                            Console.WriteLine("Contact not found. Cannot delete.");
+                        {
+                            Console.WriteLine("Invalid Id input.");
+                        }
                         break;
 
                     case "6":
                         Console.Write("Enter name or email to search: ");
-                        string searchKeyword = Console.ReadLine();
-
-                        var foundContacts = contactService.SearchContacts(searchKeyword);
-
+                        string keyword = Console.ReadLine();
+                        var foundContacts = contactService.SearchContacts(keyword);
                         if (foundContacts.Count == 0)
                             Console.WriteLine("No contacts found.");
                         else
@@ -153,11 +153,9 @@ namespace Microsoft.ContactManager.CLI
 
                     case "7":
                         Console.Write("Enter date (yyyy-MM-dd): ");
-                        DateTime filterDate;
-                        if (DateTime.TryParse(Console.ReadLine(), out filterDate))
+                        if (DateTime.TryParse(Console.ReadLine(), out DateTime filterDate))
                         {
                             var filteredContacts = contactService.FilterContactsByDate(filterDate);
-
                             if (filteredContacts.Count == 0)
                                 Console.WriteLine("No contacts found.");
                             else
@@ -177,6 +175,11 @@ namespace Microsoft.ContactManager.CLI
                         {
                             Console.WriteLine("Invalid date format.");
                         }
+                        break;
+
+                    case "8":
+                        contactService.SaveContacts();
+                        Console.WriteLine("Contacts saved to JSON successfully.");
                         break;
 
                     case "9":
