@@ -42,68 +42,79 @@ namespace Microsoft.ContactManager.CLI
                         break;
 
                     case "2":
-                        var contacts = contactService.GetContacts();
+                        var allContacts = contactService.GetContacts();
 
-                        if (contacts.Count == 0)
+                        if (allContacts.Count == 0)
                         {
-                            Console.WriteLine("No contacts found .");
+                            Console.WriteLine("No contacts found.");
                         }
                         else
                         {
-                            foreach (var contact in contacts)
+                            foreach (var c in allContacts)
                             {
                                 Console.WriteLine("-------------------");
-                                Console.WriteLine($"Id: {contact.Id}");
-                                Console.WriteLine($"Name: {contact.Name}");
-                                Console.WriteLine($"Phone: {contact.Phone}");
-                                Console.WriteLine($"Email: {contact.Email}");
-                                Console.WriteLine($"Created: {contact.CreationDate}");
+                                Console.WriteLine($"Id: {c.Id}");
+                                Console.WriteLine($"Name: {c.Name}");
+                                Console.WriteLine($"Phone: {c.Phone}");
+                                Console.WriteLine($"Email: {c.Email}");
+                                Console.WriteLine($"Created: {c.CreationDate}");
                             }
                         }
                         break;
-                    Console.WriteLine("4. Edit Contact");
 
                     case "3":
                         Console.Write("Enter Contact Id: ");
-                        int id = int.Parse(Console.ReadLine());
+                        int viewId = int.Parse(Console.ReadLine());
 
-                        var contact = contactService.GetContactById(id);
+                        var viewContact = contactService.GetContactById(viewId);
 
-                        if (contact == null)
+                        if (viewContact == null)
                         {
                             Console.WriteLine("Contact not found.");
                         }
                         else
                         {
                             Console.WriteLine("-----------");
-                            Console.WriteLine($"Id: {contact.Id}");
-                            Console.WriteLine($"Name: {contact.Name}");
-                            Console.WriteLine($"Phone: {contact.Phone}");
-                            Console.WriteLine($"Email: {contact.Email}");
-                            Console.WriteLine($"Created: {contact.CreationDate}");
+                            Console.WriteLine($"Id: {viewContact.Id}");
+                            Console.WriteLine($"Name: {viewContact.Name}");
+                            Console.WriteLine($"Phone: {viewContact.Phone}");
+                            Console.WriteLine($"Email: {viewContact.Email}");
+                            Console.WriteLine($"Created: {viewContact.CreationDate}");
                         }
                         break;
 
                     case "4":
                         Console.Write("Enter Contact Id to edit: ");
-                        int editId = int.Parse(Console.ReadLine());
+                        int editId;
+                        if (int.TryParse(Console.ReadLine(), out editId))
+                        {
+                            var existingContact = contactService.GetContactById(editId);
 
-                        Console.Write("New Name: ");
-                        string newName = Console.ReadLine();
+                            if (existingContact == null)
+                            {
+                                Console.WriteLine("Contact not found. No updates made.");
+                            }
+                            else
+                            {
+                                Console.Write("New Name: ");
+                                string newName = Console.ReadLine();
 
-                        Console.Write("New Phone: ");
-                        string newPhone = Console.ReadLine();
+                                Console.Write("New Phone: ");
+                                string newPhone = Console.ReadLine();
 
-                        Console.Write("New Email: ");
-                        string newEmail = Console.ReadLine();
+                                Console.Write("New Email: ");
+                                string newEmail = Console.ReadLine();
 
-                        bool updated = contactService.EditContact(editId, newName, newPhone, newEmail);
+                                bool updated = contactService.EditContact(editId, newName, newPhone, newEmail);
 
-                        if (updated)
-                            Console.WriteLine("Contact updated successfully.");
+                                if (updated)
+                                    Console.WriteLine("Contact updated successfully.");
+                            }
+                        }
                         else
-                            Console.WriteLine("Contact not found so no updates .");
-
+                        {
+                            Console.WriteLine("Invalid Id input.");
+                        }
                         break;
 
                     case "5":
@@ -115,9 +126,9 @@ namespace Microsoft.ContactManager.CLI
                         if (removed)
                             Console.WriteLine("Contact deleted successfully.");
                         else
-                            Console.WriteLine("Contact not found to be deleted.");
+                            Console.WriteLine("Contact not found. Cannot delete.");
                         break;
-                       
+
                     case "6":
                         Console.Write("Enter name or email to search: ");
                         string searchKeyword = Console.ReadLine();
