@@ -18,6 +18,7 @@ namespace Microsoft.ContactManager.CLI
                 Console.WriteLine("3. View Contact");
                 Console.WriteLine("4. Edit Contact");
                 Console.WriteLine("5. Delete Contact");
+                Console.WriteLine("6. Search Contacts");
                 Console.WriteLine("9. Exit");
                 Console.Write("Choose option: ");
 
@@ -114,6 +115,28 @@ namespace Microsoft.ContactManager.CLI
                             Console.WriteLine("Contact deleted successfully.");
                         else
                             Console.WriteLine("Contact not found to be deleted.");
+                        break;
+                       
+                    case "6":
+                        Console.Write("Enter name or email to search: ");
+                        string searchKeyword = Console.ReadLine();
+
+                        var foundContacts = contactService.SearchContacts(searchKeyword);
+
+                        if (foundContacts.Count == 0)
+                            Console.WriteLine("No contacts found.");
+                        else
+                        {
+                            foreach (var c in foundContacts)
+                            {
+                                Console.WriteLine("-----------");
+                                Console.WriteLine($"Id: {c.Id}");
+                                Console.WriteLine($"Name: {c.Name}");
+                                Console.WriteLine($"Phone: {c.Phone}");
+                                Console.WriteLine($"Email: {c.Email}");
+                                Console.WriteLine($"Created: {c.CreationDate}");
+                            }
+                        }
                         break;
 
                     case "9":
